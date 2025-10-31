@@ -1,13 +1,30 @@
 import os
 import time
 import threading
+import logging
+from logging.handlers import RotatingFileHandler
 from datetime import datetime
 from flask import Flask, render_template, jsonify
 
-# Create Flask app
+LOG_DIR = "/tmp/logs"
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, "app.log")
+
+log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+
+file_handler = RotatingFileHandler(LOG_FILE, maxBytes=5*1024*1024, backupCount=3)
+file_handler.setFormatter(log_formatter)
+file_handler.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(log_formatter)
+console_handler.setLevel(logging.INFO)
+
+logging.basicConfig(level=logging.INFO, handlers=[file_handler, console_handler])
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 
-# Simple dictionary to track app state
 stats = {
     "start_time": datetime.now(),
     "counter": 0,
@@ -16,15 +33,13 @@ stats = {
     "env": {}
 }
 
-# Background worker: runs every 10 seconds
 def background_worker():
     while True:
         stats["counter"] += 1
         stats["last_activity"] = datetime.now()
-        print(f"[Background] Counter = {stats['counter']}")
+        logger.info(f"[Background] Counter = {stats['counter']}")
         time.sleep(10)
 
-# Start background thread
 threading.Thread(target=background_worker, daemon=True).start()
 
 @app.route("/")
@@ -32,6 +47,7 @@ def home():
     """Render dashboard page"""
     stats["requests"] += 1
     uptime = datetime.now() - stats["start_time"]
+    logger.info(f"Request to home page. Total requests: {stats['requests']}")
 
     return render_template(
         "index.html",
@@ -46,6 +62,7 @@ def api_stats():
     """Return app stats in JSON"""
     stats["requests"] += 1
     uptime_seconds = (datetime.now() - stats["start_time"]).total_seconds()
+    logger.info(f"Stats requested. Counter={stats['counter']}, Requests={stats['requests']}")
     return jsonify({
         "app_name": stats["env"].get("APP_NAME", "SimplePythonApp"),
         "counter": stats["counter"],
@@ -60,6 +77,7 @@ def api_stats():
 @app.route("/health")
 def health():
     """Basic health check"""
+    logger.info("Health check endpoint called")
     return jsonify({
         "status": "healthy",
         "time": datetime.now().isoformat(),
@@ -72,6 +90,7 @@ def show_env():
     stats["requests"] += 1
     safe_env = {k: v for k, v in stats["env"].items()
                 if not any(s in k.lower() for s in ["password", "secret", "key", "token"])}
+    logger.info(f"Environment requested. Requests so far: {stats['requests']}")
     return jsonify(safe_env)
 
 if __name__ == "__main__":
@@ -85,5 +104,5 @@ if __name__ == "__main__":
     port = int(stats["env"]["PORT"])
     debug = stats["env"]["DEBUG"].lower() == "true"
 
-    print(f"🚀 Starting {stats['env']['APP_NAME']} at http://localhost:{port}")
+    logger.info(f"🚀 Starting {stats['env']['APP_NAME']} at http://localhost:{port}")
     app.run(host="0.0.0.0", port=port, debug=debug)

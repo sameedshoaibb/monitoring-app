@@ -7,7 +7,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
 COPY templates/ ./templates/
-RUN useradd --create-home appuser && chown -R appuser /app
+RUN useradd --create-home appuser && \
+    chown -R appuser:appuser /app && \
+    mkdir -p /tmp/logs && chown -R appuser:appuser /tmp/logs
 USER appuser
 EXPOSE 8000
 CMD ["python", "app.py"]
