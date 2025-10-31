@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: python-monitoring-app-config
+  namespace: python-monitoring-app
+data:
+  APP_NAME: "Riiico Monitoring App"
+  ENVIRONMENT: "production"
+  # PORT: "8000"
+  # HOST: "0.0.0.0"
+  # DEBUG: "false"
+  # LOG_LEVEL: "INFO"

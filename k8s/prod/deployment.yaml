@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-monitoring-app
+  namespace: python-monitoring-app
+  labels:
+    app: python-monitoring-app
+    version: v1
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: python-monitoring-app
+  template:
+    metadata:
+      labels:
+        app: python-monitoring-app
+        version: v1
+    spec:
+      serviceAccountName: python-monitoring-app
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: python-monitoring-app
+        image: simple-flask-app:v1.0.0
+        imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        
+        # # Environment Variables
+        # env:
+        # - name: POD_NAME
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: metadata.name
+        # - name: POD_NAMESPACE
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: metadata.namespace
+        # - name: NODE_NAME
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: spec.nodeName
+        
+        envFrom:
+        - configMapRef:
+            name: python-monitoring-app-config
+        - secretRef:
+            name: python-monitoring-app-secret
+        
+        # Resource Limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # # Health Checks
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8000
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        #   timeoutSeconds: 5
+        #   failureThreshold: 3
+        
+        # readinessProbe:
+        #   httpGet:
+        #     path: /ready
+        #     port: 8000
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 5
+        #   timeoutSeconds: 3
+        #   failureThreshold: 3
+        
+        # startupProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8000
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 5
+        #   failureThreshold: 30
+        
+      #   # Volume Mounts
+      #   volumeMounts:
+      #   - name: app-data
+      #     mountPath: /app/data
+      #   - name: tmp-volume
+      #     mountPath: /tmp
+      #   - name: var-tmp
+      #     mountPath: /var/tmp
+      
+      # # Volumes
+      # volumes:
+      # - name: app-data
+      #   persistentVolumeClaim:
+      #     claimName: python-monitoring-app-pvc
+      
+      # Graceful Shutdown
+      terminationGracePeriodSeconds: 30

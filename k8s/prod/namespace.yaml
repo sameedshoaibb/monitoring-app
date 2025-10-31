@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: python-monitoring-app
+  labels:
+    name: python-monitoring-app
+    environment: production
