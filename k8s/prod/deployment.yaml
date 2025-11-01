@@ -30,11 +30,11 @@ spec:
         fsGroup: 1000
       containers:
       - name: python-monitoring-app
-        image: simple-flask-app:v1.0.0
+        image: simple-flask-app:v1.2.0
         imagePullPolicy: Always
         securityContext:
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           runAsNonRoot: true
           capabilities:
             drop:
@@ -43,14 +43,11 @@ spec:
         - name: http
           containerPort: 8000
           protocol: TCP
-        
         envFrom:
         - configMapRef:
             name: python-monitoring-app-config
         - secretRef:
             name: python-monitoring-app-secret
-        
-        # Resource Limits
         resources:
           requests:
             memory: "256Mi"
@@ -58,8 +55,6 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
-        
-        # Health Checks
         livenessProbe:
           httpGet:
             path: /health
@@ -68,7 +63,6 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
-        
         readinessProbe:
           httpGet:
             path: /api/stats
@@ -77,21 +71,11 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
-        
-      #   # Volume Mounts
       #   volumeMounts:
       #   - name: app-data
-      #     mountPath: /app/data
-      #   - name: tmp-volume
-      #     mountPath: /tmp
-      #   - name: var-tmp
-      #     mountPath: /var/tmp
-      
-      # # Volumes
+      #     mountPath: /tmp/logs
       # volumes:
       # - name: app-data
       #   persistentVolumeClaim:
       #     claimName: python-monitoring-app-pvc
-      
-      # Graceful Shutdown
       terminationGracePeriodSeconds: 30
