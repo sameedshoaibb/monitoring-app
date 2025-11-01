@@ -1,0 +1,2 @@
+helm install monitoring-app-release . -f values-prod.yaml 
+helm upgrade monitoring-app-release . -f values-prod.yaml

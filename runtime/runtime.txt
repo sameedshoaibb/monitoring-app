@@ -5,3 +5,5 @@ source venv/bin/activate
 docker build -t simple-flask-app:v1.0.0 .
 docker run -dit -p 80:8000 -e APP_NAME="Riiico-APP" -e ENVIRONMENT="production" --name flask-container simple-flask-app:v1.0.0
 
+# Helm
+

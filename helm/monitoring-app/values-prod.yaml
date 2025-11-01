@@ -1,0 +1,42 @@
+environment: production
+namespace:
+  name: python-monitoring-app
+serviceAccount:
+  name: python-monitoring-app
+  automount: false
+rbac:
+  roleName: python-monitoring-app-role
+  bindingName: python-monitoring-app-binding
+service:
+  name: python-monitoring-app-service
+  type: ClusterIP
+  port: 80
+  targetPort: 8000 
+secret:
+  name: python-monitoring-app-secret
+  DATABASE_URL: c3FsaXRlOi8vL2FwcC9kYXRhL2FwcC5kYg==
+  API_KEY: bXktc2VjdXJlLWFwaS1rZXk=  
+configmap:
+  name: python-monitoring-app-config
+  APP_NAME: Riiico Monitoring App
+  ENVIRONMENT: production
+deployment:
+  name: python-monitoring-app-deployment
+  serviceAccountName: python-monitoring-app
+  image:
+    repository: simple-flask-app
+    tag: v1.2.0
+    pullPolicy: Always
+  replicas: 3
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+ingress:
+  name: python-monitoring-app-ingress
+  ingressClass: nginx
+
+

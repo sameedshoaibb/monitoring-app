@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: python-monitoring-app
+    version: v1
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: python-monitoring-app
+  template:
+    metadata:
+      labels:
+        app: python-monitoring-app
+        version: v1
+    spec:
+      serviceAccountName: {{ .Values.deployment.serviceAccountName }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: python-monitoring-app
+        image: {{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}
+        imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.targetPort }}
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.configmap.name }}
+        - secretRef:
+            name: {{ .Values.secret.name }}
+        resources:
+          requests:
+            memory: {{ .Values.deployment.resources.requests.memory }}
+            cpu: {{ .Values.deployment.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.deployment.resources.limits.memory }}
+            cpu: {{ .Values.deployment.resources.limits.cpu }}
+      terminationGracePeriodSeconds: 30
