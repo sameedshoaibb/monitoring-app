@@ -1,4 +1,38 @@
-# monitoring-app
-A real time monitoring dashboard
+# 🧭 Ro Monitoring App  
+A **real-time monitoring dashboard** built with Flask, Docker, and Kubernetes — deployed via **Helm**.
 
-<img width="1350" height="907" alt="Screenshot 2025-11-01 at 2 09 21 AM" src="https://github.com/user-attachments/assets/92e8988a-2c4f-487d-bde6-3aca654c117a" />
+<img width="1350" height="907" alt="Screenshot 2025-11-01 at 2 09 21 AM" src="https://github.com/user-attachments/assets/92e8988a-2c4f-487d-bde6-3aca654c117a" />
+
+---
+
+## 🚀 Overview
+The **Ro Monitoring App** provides live metrics and system status through a simple Flask-based web dashboard.  
+It’s containerized using Docker and deployed to a Kubernetes cluster using a Helm chart.
+
+---
+
+## 🧩 Prerequisites
+
+Before deploying, ensure you have the following installed and configured:
+
+| Tool | Minimum Version | Purpose |
+|------|------------------|----------|
+| Docker | 28.0.0+ | Container image build & run |
+| kind | 0.25.0+ | Local Kubernetes cluster emulator |
+| kubectl | 1.33.0+ | Cluster management |
+| Helm | 3.18.0+ | Deployment management |
+| GNU make | 3.81.0+ | Optional build automation |
+| Git | 2.39.0+ | Source code versioning |
+
+---
+
+## ⚙️ Deployment
+
+### 🧱 Install the Helm Release
+To install the app and create the required namespace:
+
+```bash
+helm install monitoring-app-release . \
+  -f values-prod.yaml \
+  --namespace python-monitoring-app \
+  --create-namespace

@@ -18,7 +18,7 @@ secret:
   API_KEY: bXktc2VjdXJlLWFwaS1rZXk=  
 configmap:
   name: python-monitoring-app-config
-  APP_NAME: Riiico Monitoring App
+  APP_NAME: Ro Monitoring App
   ENVIRONMENT: production
 deployment:
   name: python-monitoring-app-deployment
@@ -30,7 +30,7 @@ deployment:
   replicas: 3
   resources:
     requests:
-      memory: "256Mi"
+      memory: "253Mi"
       cpu: "200m"
     limits:
       memory: "512Mi"
