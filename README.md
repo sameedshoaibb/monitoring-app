@@ -1,7 +1,7 @@
 # 🧭 Ro Monitoring App  
 A **real-time monitoring dashboard** built with Flask, Docker, and Kubernetes — deployed via **Helm**.
 
-<img width="1350" height="907" alt="Screenshot 2025-11-01 at 2 09 21 AM" src="https://github.com/user-attachments/assets/92e8988a-2c4f-487d-bde6-3aca654c117a" />
+<img width="1306" height="905" alt="Screenshot 2025-11-02 at 1 26 36 AM" src="https://github.com/user-attachments/assets/0f6e2281-ac66-4473-9ee2-1cc298a945ae" />
 
 ---
 
