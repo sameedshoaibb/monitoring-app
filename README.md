@@ -27,6 +27,7 @@ Before deploying, ensure you have the following installed and configured:
 
 ##  Deployment
 
+
 ###  Install the Helm Release
 To install the app and create the required namespace:
 
