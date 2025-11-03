@@ -32,6 +32,8 @@ Before deploying, ensure you have the following installed and configured:
 To install the app and create the required namespace:
 
 ```bash
+git clone <repo_url>
+cd <repo>
 cd helm/monitoring-app/
 helm install monitoring-app-release . \
   -f values-prod.yaml \
